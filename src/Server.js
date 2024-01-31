@@ -1,4 +1,5 @@
 const { createHash } = require('crypto')
+const crypto = require('crypto');
 const utils = require('./utils')
 const nf = require('node-fetch')
 
