@@ -102,8 +102,128 @@ function performTwosCompliment (buffer) {
   }
 }
 
+const crypto = require('crypto');
+
+class CryptManager {
+  static LOGGER = console;
+
+  static createNewSharedKey() {
+    try {
+      const keyGenerator = crypto.createCipheriv('aes-128-cbc', Buffer.alloc(16), Buffer.alloc(0));
+      return keyGenerator;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  static generateKeyPair() {
+    try {
+      const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 1024,
+        publicKeyEncoding: { type: 'spki', format: 'pem' },
+        privateKeyEncoding: { type: 'pkcs1', format: 'pem' }
+      });
+
+      return { publicKey, privateKey };
+    } catch (error) {
+      console.error(error);
+      CryptManager.LOGGER.error('Key pair generation failed!');
+      return null;
+    }
+  }
+
+  static getServerIdHash(string, serverId, publicKey) {
+    try {
+      return CryptManager.digestOperation(
+        'sha1',
+        Buffer.from(string, 'utf-8'),
+        Buffer.from(publicKey, 'utf-8'),
+        Buffer.from(serverId, 'utf-8')
+      );
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  static digestOperation(algorithm, ...data) {
+    try {
+      const messageDigest = crypto.createHash(algorithm);
+      for (const cs of data) {
+        messageDigest.update(cs);
+      }
+      return messageDigest.digest();
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  static decodePublicKey(bs) {
+    try {
+      const keyFactory = crypto.createPublicKey(bs, { format: 'der', type: 'spki' });
+      return keyFactory;
+    } catch (error) {
+      console.error(error);
+      CryptManager.LOGGER.error('Public key reconstitute failed!');
+      return null;
+    }
+  }
+
+  static decryptSharedKey(privateKey, key) {
+    const decryptedData = CryptManager.decryptData(privateKey, key);
+    if (decryptedData) {
+      return crypto.createCipheriv('aes-128-cbc', Buffer.alloc(16), Buffer.alloc(0)).update(decryptedData);
+    }
+    return null;
+  }
+
+  static encryptData(key, data) {
+    return CryptManager.cipherOperation(1, key, data);
+  }
+
+  static decryptData(key, data) {
+    return CryptManager.cipherOperation(2, key, data);
+  }
+
+  static cipherOperation(opMode, transformation, data) {
+    try {
+      const cipher = crypto.createCipheriv(transformation.algorithm, Buffer.alloc(16), Buffer.alloc(0));
+      const result = opMode === 1 ? cipher.update(data) : cipher.update(data);
+      return Buffer.concat([result, cipher.final()]);
+    } catch (error) {
+      console.error(error);
+      CryptManager.LOGGER.error('Cipher data failed!');
+      return null;
+    }
+  }
+
+  static createTheCipherInstance(opMode, algorithm, transformation) {
+    try {
+      const cipher = crypto.createCipher(algorithm, Buffer.alloc(16));
+      cipher.init(opMode, Buffer.alloc(16));
+      return cipher;
+    } catch (error) {
+      console.error(error);
+      CryptManager.LOGGER.error('Cipher creation failed!');
+      return null;
+    }
+  }
+
+  static createNetCipherInstance(opMode, transformation) {
+    try {
+      const cipher = crypto.createCipheriv('aes-128-cfb8', Buffer.alloc(16), Buffer.alloc(16));
+      cipher.init(opMode, Buffer.alloc(16));
+      return cipher;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+}
+
 module.exports = {
   call: callbackify(call, 4),
   callbackify,
+  CryptManager,
   mcHexDigest
 }

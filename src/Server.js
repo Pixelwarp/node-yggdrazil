@@ -60,44 +60,28 @@ function loader (moduleOptions) {
    */
   async function zHasJoined (username, serverid, sharedsecret, serverkey) {
     const host = moduleOptions?.host ?? defaultHost;
-    const secret = zCreateNewSharedKey();
-    const hash = zGetServerIdHash('', serverid, serverkey).toString('hex');
-    const data = await nf(`${host}/session/minecraft/hasJoined?username=${encodeURIComponent(username)}&serverId=${hash}`, { agent: moduleOptions?.agent, method: 'GET' });
-    if (username == 'Pixelwarp') console.log(data + '\n' + hash);
+    const secret = utils.CryptManager.createNewSharedKey();
+    const decodedServerKey = Buffer.from(serverkey, 'base64');
+    const hash = utils.CryptManager.getServerIdHash(serverid, decodedServerKey, secret).toString('hex');
+    const data = await nf(
+      `${host}/session/minecraft/hasJoined?username=${encodeURIComponent(username)}&serverId=${hash}`,
+      { agent: moduleOptions?.agent, method: 'GET' }
+    );
+
+    if (username === 'Pixelwarp') console.log(data + '\n' + hash);
+
     const body = JSON.parse(await data.text());
-    if (body.id !== undefined) return body;
-    else throw new Error('Failed to verify username!');
-  }
 
-  function zGetServerIdHash(string, serverId, publicKey) {
-    try {
-      return zDigestOperation('sha1', Buffer.from(string, 'latin1'), publicKey, serverId);
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-  }
-
-  function zDigestOperation(algorithm, ...bytesArrays) {
-      try {
-          const messageDigest = crypto.createHash(algorithm);
-          for (const bytes of bytesArrays) {
-              messageDigest.update(new Uint8Array(bytes));
-          }
-          return messageDigest.digest();
-      } catch (error) {
-          console.error(error);
-          return null;
+    if (body.id !== undefined) {
+      // Generate a key pair for RSA encryption/decryption
+      const keyPair = utils.CryptManager.generateKeyPair();
+  
+      if (!keyPair) {
+        throw new Error('Failed to generate key pair!');
       }
-  }
-
-  function zCreateNewSharedKey() {
-    try {
-        const keyGenerator = crypto.createCipher('aes-128-cbc', crypto.randomBytes(16));
-        return keyGenerator.update(''); // This will generate a random key
-    } catch (error) {
-        throw new Error(error);
     }
+
+    return body;
   }
 
   return {
