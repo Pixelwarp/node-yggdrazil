@@ -1,21 +1,21 @@
-# yggdrasil
-[![NPM version](https://img.shields.io/npm/v/yggdrasil.svg)](http://npmjs.com/package/yggdrasil)
-[![Build Status](https://github.com/PrismarineJS/node-yggdrasil/workflows/CI/badge.svg)](https://github.com/PrismarineJS/node-yggdrasil/actions?query=workflow%3A%22CI%22)
+# yggdrazil
+[![NPM version](https://img.shields.io/npm/v/yggdrazil.svg)](http://npmjs.com/package/yggdrazil)
+[![Build Status](https://github.com/PrismarineJS/node-yggdrazil/workflows/CI/badge.svg)](https://github.com/PrismarineJS/node-yggdrazil/actions?query=workflow%3A%22CI%22)
 [![Discord](https://img.shields.io/badge/chat-on%20discord-brightgreen.svg)](https://discord.gg/GsEFRM8)
 [![Gitter](https://img.shields.io/badge/chat-on%20gitter-brightgreen.svg)](https://gitter.im/PrismarineJS/general)
 [![Irc](https://img.shields.io/badge/chat-on%20irc-brightgreen.svg)](https://irc.gitter.im/)
 
-[![Try it on gitpod](https://img.shields.io/badge/try-on%20gitpod-brightgreen.svg)](https://gitpod.io/#https://github.com/PrismarineJS/node-yggdrasil)
+[![Try it on gitpod](https://img.shields.io/badge/try-on%20gitpod-brightgreen.svg)](https://gitpod.io/#https://github.com/PrismarineJS/node-yggdrazil)
 
-A Node.js client for doing requests to yggdrasil, the Mojang authentication system, used for Minecraft and Scrolls.
+A Node.js client for doing requests to yggdrazil, the Mojang authentication system, used for Minecraft and Scrolls.
 
 # Usage
-    $ npm install yggdrasil
+    $ npm install yggdrazil
 
 ## Client
 ```js
 //init
-const ygg = require('yggdrasil')({
+const ygg = require('yggdrazil')({
   //Optional settings object
   host: 'https://authserver.mojang.com' //Optional custom host. No trailing slash.
 });
@@ -61,7 +61,7 @@ ygg.signout(username, password).then(
 
 ## Server
 ```js
-const yggserver = require('yggdrasil').server({
+const yggserver = require('yggdrazil').server({
   //Optional settings object
   host: 'https://authserver.mojang.com' //Optional custom host. No trailing slash.
 });
@@ -82,7 +82,7 @@ yggserver.hasJoined(username, serverid, sharedsecret, serverkey).then(
 ```js
 const ProxyAgent = require('proxy-agent');
 
-const ygg = require('yggdrasil')({
+const ygg = require('yggdrazil')({
   //Any type of HTTP Agent 
   agent: new ProxyAgent('https://example.com:8080')
 });

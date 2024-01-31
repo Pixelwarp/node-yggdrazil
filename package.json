@@ -1,8 +1,8 @@
 {
-  "name": "yggdrasil",
+  "name": "yggdrazil",
   "version": "1.7.0",
-  "author": "Zeke Sonxx <zeke@zekesonxx.com>",
-  "description": "Mojang authentication (Yggdrasil) client",
+  "author": "Pixelwarp <pixelwarp@skidders.lol>",
+  "description": "Mojang authentication (Yggdrazil) client",
   "scripts": {
     "test": "mocha -R spec",
     "pretest": "npm run lint",
@@ -12,14 +12,14 @@
   "main": "./src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/PrismarineJS/node-yggdrasil.git"
+    "url": "https://github.com/Pixelwarp/node-yggdrazil.git"
   },
   "bugs": {
-    "url": "https://github.com/PrismarineJS/node-yggdrasil/issues"
+    "url": "https://github.com/Pixelwarp/node-yggdrazil/issues"
   },
   "keywords": [
     "minecraft",
-    "yggdrasil",
+    "yggdrazil",
     "authentication"
   ],
   "dependencies": {
