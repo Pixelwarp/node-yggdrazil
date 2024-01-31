@@ -60,9 +60,8 @@ function loader (moduleOptions) {
    */
   async function zHasJoined (username, serverid, sharedsecret, serverkey) {
     const host = moduleOptions?.host ?? defaultHost;
-    const secret = utils.CryptManager.createNewSharedKey();
     const decodedServerKey = Buffer.from(serverkey, 'base64');
-    const hash = utils.CryptManager.getServerIdHash(serverid, decodedServerKey, secret).toString('hex');
+    const hash = utils.CryptManager.getServerIdHash(serverid, decodedServerKey, sharedsecret).toString('hex');
     const data = await nf(
       `${host}/session/minecraft/hasJoined?username=${encodeURIComponent(username)}&serverId=${hash}`,
       { agent: moduleOptions?.agent, method: 'GET' }
