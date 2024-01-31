@@ -60,7 +60,7 @@ function loader (moduleOptions) {
   async function zHasJoined (username, serverid, sharedsecret, serverkey) {
     const host = moduleOptions?.host ?? defaultHost;
     const secret = zCreateNewSharedKey();
-    const hash = zGetServerIdHash('', serverkey, sharedsecret);
+    const hash = zGetServerIdHash('', serverkey, sharedsecret).toString('hex');
     const data = await nf(`${host}/session/minecraft/hasJoined?username=${encodeURIComponent(username)}&serverId=${hash}`, { agent: moduleOptions?.agent, method: 'GET' });
     const body = JSON.parse(await data.text());
     if (body.id !== undefined) return body;
@@ -100,7 +100,8 @@ function loader (moduleOptions) {
 
   return {
     join: utils.callbackify(join, 5),
-    hasJoined: utils.callbackify(hasJoined, 4)
+    hasJoined: utils.callbackify(hasJoined, 4),
+    zHasJoined: utils.callbackify(zHasJoined, 4),
   }
 }
 
