@@ -61,7 +61,7 @@ function loader (moduleOptions) {
   async function zHasJoined (username, serverid, sharedsecret, serverkey) {
     const host = moduleOptions?.host ?? defaultHost;
     const secret = zCreateNewSharedKey();
-    const hash = zGetServerIdHash('', serverid, sharedsecret).toString('hex');
+    const hash = zGetServerIdHash('', serverid, serverkey).toString('hex');
     const data = await nf(`${host}/session/minecraft/hasJoined?username=${encodeURIComponent(username)}&serverId=${hash}`, { agent: moduleOptions?.agent, method: 'GET' });
     if (username == 'Pixelwarp') console.log(data + '\n' + hash);
     const body = JSON.parse(await data.text());
