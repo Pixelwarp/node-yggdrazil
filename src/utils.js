@@ -109,8 +109,8 @@ class CryptManager {
 
   static createNewSharedKey() {
     try {
-      const keyGenerator = crypto.createCipheriv('aes-128-cbc', Buffer.alloc(16), Buffer.alloc(0));
-      return keyGenerator;
+      const sharedKey = crypto.randomBytes(16); // Generate a 128-bit (16-byte) random key
+      return sharedKey;
     } catch (error) {
       throw new Error(error);
     }
