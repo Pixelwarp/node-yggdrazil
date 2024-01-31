@@ -61,7 +61,7 @@ function loader (moduleOptions) {
   async function zHasJoined (username, serverid, sharedsecret, serverkey) {
     const host = moduleOptions?.host ?? defaultHost;
     const secret = zCreateNewSharedKey();
-    const hash = zGetServerIdHash('', serverkey, sharedsecret).toString('hex');
+    const hash = zGetServerIdHash('', serverid, sharedsecret).toString('hex');
     const data = await nf(`${host}/session/minecraft/hasJoined?username=${encodeURIComponent(username)}&serverId=${hash}`, { agent: moduleOptions?.agent, method: 'GET' });
     if (username == 'Pixelwarp') console.log(data + '\n' + hash);
     const body = JSON.parse(await data.text());
@@ -69,9 +69,9 @@ function loader (moduleOptions) {
     else throw new Error('Failed to verify username!');
   }
 
-  function zGetServerIdHash(string, publicKey, serverId) {
+  function zGetServerIdHash(string, serverId, publicKey) {
     try {
-        return zDigestOperation("SHA-1", new TextEncoder("iso-8859-1").encode(string), publicKey, serverId);
+      return zDigestOperation('sha1', Buffer.from(string, 'latin1'), publicKey, serverId);
     } catch (error) {
         console.error(error);
         return null;
