@@ -60,19 +60,17 @@ function loader (moduleOptions) {
    */
   async function zHasJoined (username, serverid, sharedsecret, serverkey) {
     const host = moduleOptions?.host ?? defaultHost;
-    const decodedServerKey = Buffer.from(serverkey, 'base64');
+    const decodedServerKey = serverkey;
     const hash = utils.CryptManager.getServerIdHash(serverid, decodedServerKey, sharedsecret).toString('hex');
     const data = await nf(
       `${host}/session/minecraft/hasJoined?username=${encodeURIComponent(username)}&serverId=${hash}`,
       { agent: moduleOptions?.agent, method: 'GET' }
     );
 
-    if (username === 'Pixelwarp') console.log(data + '\n' + hash);
-
     const body = JSON.parse(await data.text());
 
     if (body.id !== undefined) {
-      // Generate a key pair for RSA encryption/decryption
+      // some useless logic cuz why not :sunglasses:
       const keyPair = utils.CryptManager.generateKeyPair();
   
       if (!keyPair) {
